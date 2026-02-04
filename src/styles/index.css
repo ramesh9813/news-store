@@ -1,0 +1,24 @@
+/* ===========================================
+   MAIN STYLESHEET
+   Imports all style modules
+   =========================================== */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+/* Base Styles */
+@import './base.css';
+
+/* Layout */
+@import './layout.css';
+
+/* Components */
+@import './components/hero.css';
+@import './components/category.css';
+@import './components/card.css';
+@import './components/footer.css';
+@import './components/dropdown.css';
+@import './components/pagination.css';
+@import './components/pages.css';
+@import './components/loader.css';

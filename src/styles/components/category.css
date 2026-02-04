@@ -1,0 +1,109 @@
+/* ===========================================
+   CATEGORY COMPONENT STYLES
+   Professional News App Button Palette
+   =========================================== */
+
+.category {
+    padding: var(--spacing-lg) var(--spacing-md);
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-gray-light);
+}
+
+.category__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+/* Base Button Style */
+.category-btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: var(--radius-md);
+    border: 2px solid;
+    background: transparent;
+    transition: var(--transition-normal);
+    cursor: pointer;
+}
+
+/* Primary variant - Blue (main actions) */
+.category-btn--primary {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.category-btn--primary:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Secondary variant - Dark Gray */
+.category-btn--secondary {
+    color: var(--color-secondary);
+    border-color: var(--color-secondary);
+}
+
+.category-btn--secondary:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+}
+
+/* Danger variant - Red (for breaking/urgent) */
+.category-btn--danger {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.category-btn--danger:hover {
+    background-color: var(--color-danger);
+    color: var(--color-white);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* Success variant - Green */
+.category-btn--success {
+    color: var(--color-success);
+    border-color: var(--color-success);
+}
+
+.category-btn--success:hover {
+    background-color: var(--color-success);
+    color: var(--color-white);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+
+/* Warning variant - Amber */
+.category-btn--warning {
+    color: #D97706;
+    border-color: var(--color-warning);
+}
+
+.category-btn--warning:hover {
+    background-color: var(--color-warning);
+    color: var(--color-black);
+}
+
+/* Info variant - Sky Blue */
+.category-btn--info {
+    color: var(--color-info);
+    border-color: var(--color-info);
+}
+
+.category-btn--info:hover {
+    background-color: var(--color-info);
+    color: var(--color-white);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+/* Responsive */
+@media screen and (max-width: 640px) {
+    .category-btn {
+        padding: var(--spacing-xs) var(--spacing-md);
+        font-size: 0.75rem;
+    }
+}

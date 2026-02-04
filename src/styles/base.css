@@ -1,0 +1,292 @@
+/* ===========================================
+   BASE STYLES
+   Reset, Variables, Typography
+   =========================================== */
+
+/* CSS Custom Properties */
+:root {
+    /* Primary Colors - Blue for Trust & Clarity */
+    --color-primary: #2563EB;
+    --color-primary-dark: #1E3A8A;
+    --color-primary-light: #3B82F6;
+
+    /* Secondary - Dark Gray/Charcoal */
+    --color-secondary: #1F2937;
+    --color-secondary-light: #374151;
+
+    /* Alert/Urgent - Red (use sparingly) */
+    --color-danger: #DC2626;
+    --color-danger-muted: #B91C1C;
+
+    /* Success - Green */
+    --color-success: #16A34A;
+    --color-success-muted: #15803D;
+
+    /* Warning */
+    --color-warning: #F59E0B;
+
+    /* Info */
+    --color-info: #0EA5E9;
+
+    /* Neutrals */
+    --color-white: #ffffff;
+    --color-black: #0A2540;
+    --color-gray: #6B7280;
+    --color-gray-light: #F3F4F6;
+    --color-gray-dark: #1F2937;
+
+    /* Background */
+    --color-bg: #ffffff;
+    --color-bg-secondary: #F9FAFB;
+    --color-surface: #ffffff;
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+
+    /* Typography */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-2xl: 1.875rem;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-full: 9999px;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+    --color-white: #1a1a2e;
+    --color-black: #f0f0f0;
+    --color-gray: #9CA3AF;
+    --color-gray-light: #2d2d44;
+    --color-gray-dark: #E5E7EB;
+    --color-bg: #0f0f1a;
+    --color-bg-secondary: #1a1a2e;
+    --color-surface: #1a1a2e;
+}
+
+[data-theme="dark"] body {
+    background-color: var(--color-bg);
+    color: var(--color-gray-dark);
+}
+
+[data-theme="dark"] .news-card {
+    background: var(--color-surface);
+    border-color: var(--color-gray-light);
+}
+
+[data-theme="dark"] .news-card:hover {
+    border-color: var(--color-primary);
+}
+
+[data-theme="dark"] .news-card__title {
+    color: var(--color-black);
+}
+
+[data-theme="dark"] .news-card__date {
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .news-card__reading-time {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+[data-theme="dark"] .news-card__bookmark {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .news-card__bookmark .material-icons {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+[data-theme="dark"] .share__popup {
+    background: var(--color-surface);
+    border-color: var(--color-gray-light);
+}
+
+[data-theme="dark"] .share__option {
+    color: var(--color-gray-dark);
+}
+
+[data-theme="dark"] .share__option:hover {
+    background: var(--color-gray-light);
+}
+
+[data-theme="dark"] .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+[data-theme="dark"] .footer {
+    background: #0f0f1a;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .static-page {
+    background: var(--color-bg);
+}
+
+[data-theme="dark"] .static-page__card {
+    background: var(--color-surface);
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.theme-toggle .material-icons {
+    font-size: 22px;
+    color: #fff;
+}
+
+/* Scroll to Top Button */
+.scroll-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a1a2e;
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    transition: var(--transition-normal);
+    z-index: 1000;
+}
+
+.scroll-to-top:hover {
+    background: #2563eb;
+    transform: translateY(-4px);
+}
+
+.scroll-to-top .material-icons {
+    font-size: 24px;
+}
+
+[data-theme="dark"] .scroll-to-top {
+    background: #2563eb;
+}
+
+[data-theme="dark"] .scroll-to-top:hover {
+    background: #3B82F6;
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base Styles */
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    line-height: 1.6;
+    color: var(--color-gray-dark);
+    background-color: var(--color-white);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+button {
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+    background: none;
+}
+
+ul {
+    list-style: none;
+}
+
+/* Utility Classes */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* App Layout - Sticky Footer */
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app>main {
+    flex: 1;
+}
