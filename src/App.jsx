@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -10,70 +10,85 @@ import {
 import Hero from "./components/layout/Hero";
 import Footer from "./components/layout/Footer";
 import NewsCard from "./components/cards/NewsCard";
-import Pagination from "./components/navigation/Pagination";
-import Loader from "./components/common/Loader";
+import { SkeletonGrid } from "./components/common/SkeletonCard";
 import ScrollToTop from "./components/common/ScrollToTop";
 import useNews from "./hooks/useNews";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
+import Bookmarks from "./pages/Bookmarks";
+import NewsDetail from "./pages/NewsDetail";
 
-const ITEMS_PER_PAGE = 15;
-
-// Home page content with URL-synced search
+// Home page content with URL-synced search & infinite scroll
 const HomeContent = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Get search query and page from URL, with defaults
+  // Get search query from URL
   const searchQuery = searchParams.get("q") || "everything";
-  const pageFromUrl = parseInt(searchParams.get("page")) || 1;
+  const language = searchParams.get("lang") || "en";
+  const [page, setPage] = useState(1);
 
-  const [currentPage, setCurrentPage] = useState(pageFromUrl);
-  const { news, loading, error } = useNews(searchQuery);
+  const { news, loading, error, hasMore, fetchNews } = useNews(
+    searchQuery,
+    language,
+  );
 
-  // Sync page state with URL when URL changes
+  // Load more function
+  const loadMore = useCallback(() => {
+    if (!loading && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchNews(searchQuery, nextPage, language);
+    }
+  }, [loading, hasMore, page, fetchNews, searchQuery, language]);
+
+  // Infinite scroll handler
   useEffect(() => {
-    setCurrentPage(pageFromUrl);
-  }, [pageFromUrl]);
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 1000 // Load when 1000px from bottom
+      ) {
+        loadMore();
+      }
+    };
 
-  // Update URL when search changes
-  const handleSearchChange = (newSearch) => {
-    const params = new URLSearchParams();
-    if (newSearch && newSearch !== "everything") {
-      params.set("q", newSearch);
-    }
-    // Reset to page 1 on new search
-    setSearchParams(params);
-    setCurrentPage(1);
-  };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loadMore]);
 
-  // Update URL when page changes
-  const handlePageChange = (newPage) => {
+  // Trigger fetch when search or language changes
+  useEffect(() => {
+    // Reset page and fetch new data when search or language changes
+    setPage(1);
+    fetchNews(searchQuery, 1, language);
+  }, [searchQuery, language, fetchNews]);
+
+  // Handle search change from Hero
+  const handleSearchChange = (newSearch, newLang) => {
     const params = new URLSearchParams(searchParams);
-    if (newPage > 1) {
-      params.set("page", newPage.toString());
-    } else {
-      params.delete("page");
+    if (newSearch) {
+      if (newSearch !== "everything") params.set("q", newSearch);
+      else params.delete("q");
+    }
+    if (newLang) {
+      params.set("lang", newLang);
     }
     setSearchParams(params);
-    setCurrentPage(newPage);
+    setPage(1);
   };
-
-  // Pagination logic
-  const totalPages = Math.ceil((news?.length || 0) / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedNews =
-    news?.slice(startIndex, startIndex + ITEMS_PER_PAGE) || [];
 
   return (
     <>
-      <Hero currentTopic={searchQuery} setSearch={handleSearchChange} />
+      <Hero
+        currentTopic={searchQuery}
+        currentLang={language}
+        setSearch={handleSearchChange}
+      />
 
       <main className="section">
-        {loading && <Loader text="" />}
-
-        {error && (
+        {error && news.length === 0 && (
           <div className="news-empty">
             <p className="news-empty__text">Error: {error}</p>
           </div>
@@ -87,22 +102,36 @@ const HomeContent = () => {
           </div>
         )}
 
-        {!loading && !error && paginatedNews.length > 0 && (
-          <>
-            <div className="news-grid">
-              {paginatedNews.map((article, index) => (
-                <NewsCard key={article.url || index} article={article} />
-              ))}
-            </div>
+        <div className="news-grid">
+          {news.map((article, index) => (
+            <NewsCard key={`${article.url}-${index}`} article={article} />
+          ))}
+        </div>
 
-            {totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            )}
-          </>
+        {loading && (
+          <div style={{ marginTop: "2rem" }}>
+            <SkeletonGrid count={news.length === 0 ? 12 : 4} />
+          </div>
+        )}
+
+        {!loading && hasMore && news.length > 0 && (
+          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+            <button className="button button--primary" onClick={loadMore}>
+              Load More
+            </button>
+          </div>
+        )}
+
+        {!hasMore && news.length > 0 && (
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "2rem",
+              color: "var(--text-secondary)",
+            }}
+          >
+            You've reached the end.
+          </div>
         )}
       </main>
 
@@ -111,12 +140,11 @@ const HomeContent = () => {
   );
 };
 
-// Page wrapper for static pages (About, Contact, Privacy)
+// Page wrapper for static pages (About, Contact, Privacy, etc)
 const PageLayout = () => {
   const navigate = useNavigate();
 
   const handleSearchChange = (newSearch) => {
-    // Navigate to home with search query
     if (newSearch && newSearch !== "everything") {
       navigate(`/?q=${encodeURIComponent(newSearch)}`);
     } else {
@@ -139,6 +167,8 @@ const App = () => {
       <div className="app">
         <Routes>
           <Route path="/" element={<HomeContent />} />
+          <Route path="/bookmarks" element={<Bookmarks />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
           <Route element={<PageLayout />}>
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />

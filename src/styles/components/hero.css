@@ -36,6 +36,16 @@
 
 .hero__logo {
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    /* Prevent crushing on small screens */
+    overflow: visible;
+    /* Ensure nothing is clipped */
+    margin-left: 50px;
+    /* Shift right further as requested */
+    z-index: 10;
 }
 
 .hero__title {
@@ -154,12 +164,39 @@
         padding: var(--spacing-md);
     }
 
+    .hero__content {
+        gap: var(--spacing-sm);
+    }
+
     .hero__title {
         font-size: 1.1rem;
     }
 
+    /* Stack controls more efficiently */
+    .hero__controls {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .hero__search {
+        flex: 1;
+        width: 100%;
+        order: 2;
+        /* Move search below logo/toggle on very small screens if needed, or keep inline */
+        justify-content: center;
+    }
+
     .hero__input {
-        width: 150px;
+        width: 100%;
+        /* Full width search on mobile */
+        max-width: none;
+    }
+
+    .language-selector {
+        margin-left: 0 !important;
+        /* Reset inline style margin */
     }
 }
 
@@ -168,60 +205,60 @@
    =========================================== */
 
 [data-theme="dark"] .hero {
-    background: #0f0f1a;
-    border-bottom-color: rgba(255, 255, 255, 0.1);
+    background: var(--color-bg);
+    border-bottom-color: var(--color-gray-light);
 }
 
 [data-theme="dark"] .hero__title {
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--color-white);
 }
 
 [data-theme="dark"] .hero__logo:hover .hero__title {
-    color: #3b82f6;
+    color: var(--color-primary-light);
 }
 
 [data-theme="dark"] .hero__input {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
+    background: var(--color-bg-secondary);
+    border-color: var(--color-gray-light);
+    color: var(--color-white);
 }
 
 [data-theme="dark"] .hero__input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--color-gray);
 }
 
 [data-theme="dark"] .hero__input:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: var(--color-surface);
+    border-color: var(--color-gray);
 }
 
 [data-theme="dark"] .hero__input:focus {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background: var(--color-bg);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
 [data-theme="dark"] .hero__button {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
+    background: var(--color-bg-secondary);
+    border-color: var(--color-gray-light);
+    color: var(--color-gray-dark);
 }
 
 [data-theme="dark"] .hero__button:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.95);
+    background: var(--color-surface);
+    border-color: var(--color-gray);
+    color: var(--color-white);
 }
 
 [data-theme="dark"] .theme-toggle {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: var(--color-bg-secondary);
+    border-color: var(--color-gray-light);
 }
 
 [data-theme="dark"] .theme-toggle:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--color-surface);
 }
 
 [data-theme="dark"] .theme-toggle .material-icons {
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--color-white);
 }

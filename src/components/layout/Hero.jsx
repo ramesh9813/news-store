@@ -1,16 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import TopicDropdown from "../navigation/TopicDropdown";
+import CategoryTabs from "../navigation/CategoryTabs";
 import NSLogo from "../common/NSLogo";
 import ThemeToggle from "../common/ThemeToggle";
+import useSearchHistory from "../../hooks/useSearchHistory";
 
-const Hero = ({ currentTopic, setSearch }) => {
+const Hero = ({ currentTopic, currentLang, setSearch }) => {
   const [query, setQuery] = useState("");
+  const [showHistory, setShowHistory] = useState(false);
   const navigate = useNavigate();
+  const searchRef = useRef(null);
+  const { history, addToHistory, clearHistory } = useSearchHistory();
 
-  const handleSearch = () => {
-    if (query.trim()) {
-      setSearch(query);
+  const handleSearch = (searchQuery) => {
+    const term = searchQuery || query;
+    if (term.trim()) {
+      setSearch(term);
+      addToHistory(term);
+      setShowHistory(false);
     }
   };
 
@@ -22,13 +29,21 @@ const Hero = ({ currentTopic, setSearch }) => {
 
   const handleHomeClick = (e) => {
     e.preventDefault();
-    // Reset search query input
     setQuery("");
-    // Reset topic to show all news
     setSearch("everything");
-    // Navigate to home
     navigate("/");
   };
+
+  // Close history when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowHistory(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="hero">
@@ -38,28 +53,92 @@ const Hero = ({ currentTopic, setSearch }) => {
         </a>
 
         <div className="hero__controls">
-          <TopicDropdown
-            currentTopic={currentTopic}
-            onSelectTopic={setSearch}
-          />
+          <div className="hero__search-container" ref={searchRef}>
+            <div className="hero__search">
+              <input
+                type="text"
+                className="hero__input"
+                placeholder="Search news..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setShowHistory(true)}
+                onKeyPress={handleKeyPress}
+              />
+              <button className="hero__button" onClick={() => handleSearch()}>
+                Search
+              </button>
+            </div>
 
-          <div className="hero__search">
-            <input
-              type="text"
-              className="hero__input"
-              placeholder="Search news..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyPress={handleKeyPress}
-            />
-            <button className="hero__button" onClick={handleSearch}>
-              Search
-            </button>
+            {showHistory && history.length > 0 && (
+              <div className="search-history">
+                <div className="search-history__header">
+                  <span>Recent Searches</span>
+                  <button
+                    className="search-history__clear"
+                    onClick={clearHistory}
+                  >
+                    Clear
+                  </button>
+                </div>
+                <ul className="search-history__list">
+                  {history.map((item, index) => (
+                    <li
+                      key={index}
+                      className="search-history__item"
+                      onClick={() => {
+                        setQuery(item);
+                        handleSearch(item);
+                      }}
+                    >
+                      <span className="material-icons">history</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           <ThemeToggle />
+
+          <div
+            className="language-selector"
+            style={{ position: "relative", marginLeft: "1rem" }}
+          >
+            <select
+              value={currentLang || "en"}
+              onChange={(e) => setSearch(null, e.target.value)}
+              style={{
+                padding: "0.5rem",
+                borderRadius: "8px",
+                border: "1px solid var(--border-color)",
+                background: "var(--bg-card)",
+                color: "var(--text-primary)",
+                cursor: "pointer",
+              }}
+            >
+              <option value="en">🇺🇸 EN</option>
+              <option value="es">🇪🇸 ES</option>
+              <option value="fr">🇫🇷 FR</option>
+              <option value="de">🇩🇪 DE</option>
+              <option value="it">🇮🇹 IT</option>
+            </select>
+          </div>
+
+          <Link
+            to="/bookmarks"
+            className="hero__icon-link"
+            aria-label="Bookmarks"
+          >
+            <span className="material-icons">bookmark_border</span>
+          </Link>
         </div>
       </div>
+
+      <CategoryTabs
+        currentCategory={currentTopic}
+        onSelectCategory={setSearch}
+      />
     </header>
   );
 };

@@ -1,0 +1,84 @@
+.category-tabs-container {
+    width: 100%;
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-gray-light);
+    padding: 0.75rem var(--spacing-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scroll on iOS */
+}
+
+.category-tabs {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding: 0 var(--spacing-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    justify-content: flex-start;
+    /* Or center if preferred */
+}
+
+@media (min-width: 768px) {
+    .category-tabs {
+        justify-content: center;
+        gap: 1.5rem;
+    }
+}
+
+.category-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.category-tabs__button {
+    background: transparent;
+    border: none;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-gray);
+    cursor: pointer;
+    padding: 0.5rem 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    opacity: 0.8;
+}
+
+.category-tabs__button:hover {
+    color: var(--color-primary);
+    opacity: 1;
+    background-color: transparent;
+}
+
+.category-tabs__button--active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    opacity: 1;
+}
+
+.category-tabs__button--active:hover {
+    background-color: transparent;
+    color: var(--color-primary);
+}
+
+[data-theme="dark"] .category-tabs-container {
+    background-color: var(--color-bg);
+    /* Ensure it matches body bg */
+    border-bottom-color: var(--color-gray-light);
+}
+
+[data-theme="dark"] .category-tabs__button {
+    color: var(--color-gray-dark);
+}
+
+[data-theme="dark"] .category-tabs__button:hover,
+[data-theme="dark"] .category-tabs__button--active {
+    color: var(--color-primary-light);
+    border-bottom-color: var(--color-primary-light);
+}

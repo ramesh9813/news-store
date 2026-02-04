@@ -74,14 +74,14 @@
 
 /* Dark Mode Variables */
 [data-theme="dark"] {
-    --color-white: #1a1a2e;
-    --color-black: #f0f0f0;
-    --color-gray: #9CA3AF;
-    --color-gray-light: #2d2d44;
-    --color-gray-dark: #E5E7EB;
-    --color-bg: #0f0f1a;
-    --color-bg-secondary: #1a1a2e;
-    --color-surface: #1a1a2e;
+    --color-white: #e5e7eb;
+    --color-black: #000000;
+    --color-gray: #9ca3af;
+    --color-gray-light: #374151;
+    --color-gray-dark: #d1d5db;
+    --color-bg: #121212;
+    --color-bg-secondary: #18181b;
+    --color-surface: #1e1e1e;
 }
 
 [data-theme="dark"] body {
@@ -134,7 +134,8 @@
 }
 
 [data-theme="dark"] .hero {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-gray-light);
 }
 
 [data-theme="dark"] .footer {
