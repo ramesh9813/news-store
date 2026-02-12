@@ -3,6 +3,14 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 const API_URL = import.meta.env.VITE_NEWS_API_URL;
 
+const getApiErrorMessage = (payload, status, statusText) => {
+  if (payload?.results?.message) return payload.results.message;
+  if (payload?.message) return payload.message;
+  if (payload?.error?.message) return payload.error.message;
+  if (status === 429) return "Rate limit exceeded. Please try again shortly.";
+  return `Request failed (${status}${statusText ? ` ${statusText}` : ""})`;
+};
+
 /**
  * Custom hook for fetching news articles from NewsData.io
  * @param {string} initialSearch - Initial search query
@@ -22,6 +30,12 @@ const useNews = (initialSearch = 'everything', language = 'en') => {
   const currentSearchRef = useRef(initialSearch);
 
   const fetchNews = useCallback(async (query, page = 1, language = 'en') => {
+    if (!API_KEY || !API_URL) {
+      setError("Missing API configuration. Check VITE_NEWS_API_URL and VITE_NEWS_API_KEY.");
+      setLoading(false);
+      return;
+    }
+
     // If query changed, clear existing news
     const isNewSearch = query !== currentSearchRef.current;
     
@@ -58,16 +72,28 @@ const useNews = (initialSearch = 'everything', language = 'en') => {
       const response = await fetch(url, {
         referrerPolicy: "no-referrer" 
       });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to fetch news');
+
+      let data = null;
+      const contentType = response.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        data = await response.json();
       }
       
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(
+          getApiErrorMessage(data, response.status, response.statusText),
+        );
+      }
+
+      if (data?.status === "error") {
+        throw new Error(
+          getApiErrorMessage(data, response.status, response.statusText),
+        );
+      }
       
       // Map NewsData.io response to our internal article format
-      const mappedArticles = (data.results || [])
+      const results = Array.isArray(data?.results) ? data.results : [];
+      const mappedArticles = results
         .filter(article => !article.duplicate) // Filter out API-marked duplicates
         .map(article => ({
           id: article.article_id, // Map ID for better deduplication

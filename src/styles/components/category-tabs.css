@@ -2,32 +2,23 @@
     width: 100%;
     background-color: var(--color-bg);
     border-bottom: 1px solid var(--color-gray-light);
-    padding: 0.75rem var(--spacing-md);
+    padding: 0.55rem 0.75rem;
     position: sticky;
     top: 0;
     z-index: 100;
     -webkit-overflow-scrolling: touch;
-    /* Smooth scroll on iOS */
 }
 
 .category-tabs {
     display: flex;
     gap: 0.5rem;
     overflow-x: auto;
-    padding: 0 var(--spacing-xl);
+    padding: 0;
     max-width: 1200px;
     margin: 0 auto;
     -ms-overflow-style: none;
     scrollbar-width: none;
     justify-content: flex-start;
-    /* Or center if preferred */
-}
-
-@media (min-width: 768px) {
-    .category-tabs {
-        justify-content: center;
-        gap: 1.5rem;
-    }
 }
 
 .category-tabs::-webkit-scrollbar {
@@ -35,50 +26,113 @@
 }
 
 .category-tabs__button {
-    background: transparent;
-    border: none;
+    background: #ffffff;
+    border: 1px solid var(--color-gray-light);
+    border-radius: 999px;
     font-family: inherit;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--color-gray);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #64748b;
     cursor: pointer;
-    padding: 0.5rem 0;
-    border-bottom: 2px solid transparent;
-    border-radius: 0;
+    padding: 0.45rem 0.78rem;
     white-space: nowrap;
     transition: all 0.2s ease;
-    opacity: 0.8;
 }
 
 .category-tabs__button:hover {
-    color: var(--color-primary);
-    opacity: 1;
-    background-color: transparent;
+    border-color: #cbd5e1;
+    color: #1e3a8a;
+    background-color: #f8fafc;
 }
 
 .category-tabs__button--active {
-    color: var(--color-primary);
-    border-bottom-color: var(--color-primary);
-    opacity: 1;
+    color: #ffffff;
+    background: #1e40af;
+    border-color: #1e40af;
+    box-shadow: 0 6px 18px rgba(30, 64, 175, 0.25);
 }
 
 .category-tabs__button--active:hover {
-    background-color: transparent;
-    color: var(--color-primary);
+    background-color: #1e40af;
+    color: #ffffff;
+}
+
+@media (min-width: 768px) {
+    .category-tabs-container {
+        padding: 0.65rem 1.25rem;
+    }
+
+    .category-tabs {
+        justify-content: center;
+        gap: 1.5rem;
+    }
+
+    .category-tabs__button {
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--color-gray);
+        padding: 0.5rem 0;
+        opacity: 0.85;
+        box-shadow: none;
+    }
+
+    .category-tabs__button:hover {
+        color: var(--color-primary);
+        opacity: 1;
+        background-color: transparent;
+    }
+
+    .category-tabs__button--active {
+        color: var(--color-primary);
+        border-bottom-color: var(--color-primary);
+        background: transparent;
+        opacity: 1;
+    }
+
+    .category-tabs__button--active:hover {
+        background-color: transparent;
+        color: var(--color-primary);
+    }
 }
 
 [data-theme="dark"] .category-tabs-container {
     background-color: var(--color-bg);
-    /* Ensure it matches body bg */
     border-bottom-color: var(--color-gray-light);
 }
 
 [data-theme="dark"] .category-tabs__button {
-    color: var(--color-gray-dark);
+    background: #1f2937;
+    border-color: #334155;
+    color: #cbd5e1;
 }
 
-[data-theme="dark"] .category-tabs__button:hover,
+[data-theme="dark"] .category-tabs__button:hover {
+    border-color: #475569;
+    color: #e2e8f0;
+    background: #273244;
+}
+
 [data-theme="dark"] .category-tabs__button--active {
-    color: var(--color-primary-light);
-    border-bottom-color: var(--color-primary-light);
+    color: #ffffff;
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+@media (min-width: 768px) {
+    [data-theme="dark"] .category-tabs__button {
+        background: transparent;
+        border-color: transparent;
+        color: var(--color-gray-dark);
+    }
+
+    [data-theme="dark"] .category-tabs__button:hover,
+    [data-theme="dark"] .category-tabs__button--active {
+        color: var(--color-primary-light);
+        border-bottom-color: var(--color-primary-light);
+        background: transparent;
+    }
 }
