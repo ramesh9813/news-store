@@ -4,8 +4,7 @@ const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 const API_URL = import.meta.env.VITE_NEWS_API_URL;
 
 /**
- * Custom hook for fetching news articles
- * Uses 'everything' endpoint for more results
+ * Custom hook for fetching news articles from NewsData.io
  * @param {string} initialSearch - Initial search query
  * @param {string} language - Language code (default: 'en')
  * @returns {Object} - news data, loading state, error, and refetch function
@@ -15,6 +14,9 @@ const useNews = (initialSearch = 'everything', language = 'en') => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
+  
+  // Use ref for cursor to avoid changing fetchNews identity and causing infinite loops in consumers
+  const nextPageCursorRef = useRef(null);
 
   // We need to keep track of the current search to know when to reset
   const currentSearchRef = useRef(initialSearch);
@@ -22,17 +24,35 @@ const useNews = (initialSearch = 'everything', language = 'en') => {
   const fetchNews = useCallback(async (query, page = 1, language = 'en') => {
     // If query changed, clear existing news
     const isNewSearch = query !== currentSearchRef.current;
+    
+    // Reset state for new search
     if (isNewSearch) {
         setNews([]);
+        nextPageCursorRef.current = null;
         currentSearchRef.current = query;
+        page = 1; // Force page 1 logic for new search
     }
     
     setLoading(true);
     setError(null);
     
     try {
-      // Use 'everything' endpoint
-      const url = `${API_URL}?q=${encodeURIComponent(query)}&pageSize=${12}&page=${page}&sortBy=publishedAt&language=${language}&apiKey=${API_KEY}`;
+      let url = `${API_URL}?apikey=${API_KEY}&q=${encodeURIComponent(query)}&language=${language}`;
+      
+      // Handle pagination
+      // If page > 1, we expect to use the nextPage cursor if available
+      // For the very first load or new search, we don't send 'page' param (which is cursor in this API)
+      if (page > 1 && nextPageCursorRef.current) {
+          url += `&page=${nextPageCursorRef.current}`;
+      } else if (page > 1 && !nextPageCursorRef.current) {
+           // If page > 1 requested but no cursor, we might be at end or invalid state
+           // BUT, if it's strictly a loadMore call and we don't have a cursor, we should stop.
+           // However, if logic is loose, we might just re-fetch page 1 if we didn't return here.
+           // Returning here is safer to avoid duplicate page 1 fetches.
+           setLoading(false);
+           return;
+      }
+      
       console.log("Fetching URL:", url);
       
       const response = await fetch(url);
@@ -44,39 +64,67 @@ const useNews = (initialSearch = 'everything', language = 'en') => {
       
       const data = await response.json();
       
-      // Filter out articles with [Removed] content
-      const validArticles = (data.articles || []).filter(
-        article => article.title !== '[Removed]' && article.content !== '[Removed]'
+      // Map NewsData.io response to our internal article format
+      const mappedArticles = (data.results || [])
+        .filter(article => !article.duplicate) // Filter out API-marked duplicates
+        .map(article => ({
+          id: article.article_id, // Map ID for better deduplication
+          title: article.title,
+          description: article.description || article.content?.slice(0, 200) + "...",
+          url: article.link,
+          urlToImage: article.image_url,
+          publishedAt: article.pubDate,
+          source: {
+            name: article.source_name,
+            id: article.source_id
+          },
+          content: article.content,
+          author: article.creator ? article.creator[0] : null
+        }));
+
+      // Filter out invalid articles
+      const validArticles = mappedArticles.filter(
+        article => article.title && article.url
       );
       
       setNews(prev => {
-          // If page 1 or new search, replace. Else append.
           if (page === 1 || isNewSearch) return validArticles;
           
-          // Deduplicate based on URL
+          // Deduplicate based on ID or URL
           const newArticles = validArticles.filter(
-            newArt => !prev.some(prevArt => prevArt.url === newArt.url)
+            newArt => !prev.some(prevArt => 
+              (newArt.id && prevArt.id === newArt.id) || 
+              prevArt.url === newArt.url ||
+              prevArt.title === newArt.title // Last resort title check
+            )
           );
           return [...prev, ...newArticles];
       });
 
-      // If fewer articles returned than requested, we reached the end
-      setHasMore(data.articles.length > 0 && data.totalResults > news.length + validArticles.length);
+      // Update cursor for next page
+      if (data.nextPage) {
+          nextPageCursorRef.current = data.nextPage;
+          setHasMore(true);
+      } else {
+          nextPageCursorRef.current = null;
+          setHasMore(false);
+      }
 
     } catch (err) {
+      console.error("News fetch error:", err);
       setError(err.message);
-      if (page === 1) setNews([]);
+      if (page === 1 || isNewSearch) setNews([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // Stable dependency array
 
   useEffect(() => {
     // Initial fetch handled by component or explicit call
     // But we can trigger it here if search changes prop-driven
     // For now, we leave control to the component mostly, but ensuring initial load:
-    fetchNews(initialSearch, 1);
-  }, [initialSearch, fetchNews]);
+    fetchNews(initialSearch, 1, language);
+  }, [initialSearch, language, fetchNews]); 
 
   return { news, loading, error, hasMore, fetchNews };
 };
