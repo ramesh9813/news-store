@@ -3,6 +3,22 @@
    Mobile-first layout tuned for Android
    =========================================== */
 
+.hero-shell {
+    position: sticky;
+    top: 0;
+    z-index: 240;
+    transition: transform 0.24s ease;
+    will-change: transform;
+}
+
+.hero-shell--visible {
+    transform: translateY(0);
+}
+
+.hero-shell--hidden {
+    transform: translateY(-100%);
+}
+
 .hero {
     width: 100%;
     background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
@@ -40,7 +56,7 @@
 }
 
 .hero__brand-title {
-    color: #111827;
+    color: #121212;
     font-size: 0.95rem;
     line-height: 1.1;
     font-weight: 700;
@@ -326,8 +342,8 @@
    =========================================== */
 
 [data-theme="dark"] .hero {
-    background: linear-gradient(180deg, #141821 0%, #11151d 100%);
-    border-bottom-color: #2b3443;
+    background: #121212;
+    border-bottom-color: #1f1f1f;
 }
 
 [data-theme="dark"] .hero__brand-title {
