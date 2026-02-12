@@ -101,21 +101,11 @@ const Hero = ({ currentTopic, currentLang, setSearch }) => {
 
           <ThemeToggle />
 
-          <div
-            className="language-selector"
-            style={{ position: "relative", marginLeft: "1rem" }}
-          >
+          <div className="language-selector">
             <select
+              className="language-selector__select"
               value={currentLang || "en"}
               onChange={(e) => setSearch(null, e.target.value)}
-              style={{
-                padding: "0.5rem",
-                borderRadius: "8px",
-                border: "1px solid var(--border-color)",
-                background: "var(--bg-card)",
-                color: "var(--text-primary)",
-                cursor: "pointer",
-              }}
             >
               <option value="en">🇺🇸 EN</option>
               <option value="es">🇪🇸 ES</option>

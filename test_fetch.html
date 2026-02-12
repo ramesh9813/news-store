@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>API Test</h1>
+    <div id="output">Running...</div>
+    <script>
+        const url = "https://newsdata.io/api/1/latest?apikey=pub_7de0e204099d4a25981b0d337ba75317&q=everything&language=en";
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('output').textContent = "SUCCESS: " + data.status;
+                console.log("SUCCESS", data);
+            })
+            .catch(err => {
+                document.getElementById('output').textContent = "ERROR: " + err.message;
+                console.error("ERROR", err);
+            });
+    </script>
+</body>
+</html>

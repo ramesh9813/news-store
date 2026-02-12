@@ -55,7 +55,9 @@ const useNews = (initialSearch = 'everything', language = 'en') => {
       
       console.log("Fetching URL:", url);
       
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        referrerPolicy: "no-referrer" 
+      });
       
       if (!response.ok) {
         const errorData = await response.json();

@@ -165,38 +165,68 @@
     }
 
     .hero__content {
+        flex-flow: row wrap;
+        justify-content: space-between;
         gap: var(--spacing-sm);
     }
 
-    .hero__title {
-        font-size: 1.1rem;
+    /* Row 1, Left: Logo */
+    .hero__logo {
+        margin-left: 0;
+        order: 1;
+        flex: 0 0 auto;
     }
 
-    /* Stack controls more efficiently */
+    /* Row 1, Right: Icons (Search container is separate) */
     .hero__controls {
+        display: contents;
+        /* Flattens children to be direct flex items of hero__content */
+    }
+
+    /* These items will float to the right on Row 1 */
+    .theme-toggle,
+    .language-selector,
+    .hero__icon-link {
+        order: 2;
+        margin-left: var(--spacing-sm);
+    }
+
+    /* Ensure language selector looks good */
+    .language-selector {
+        position: relative;
+    }
+
+    .language-selector__select {
+        padding: 0.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-color, #e5e7eb);
+        background: var(--bg-card, #ffffff);
+        color: var(--text-primary, #1f2937);
+        cursor: pointer;
+    }
+
+    /* Row 2: Search Bar */
+    .hero__search-container {
+        order: 3;
         width: 100%;
-        flex-direction: row;
-        justify-content: space-between;
-        flex-wrap: wrap;
+        margin-top: 0.5rem;
     }
 
     .hero__search {
-        flex: 1;
         width: 100%;
-        order: 2;
-        /* Move search below logo/toggle on very small screens if needed, or keep inline */
-        justify-content: center;
+        display: flex;
+        gap: var(--spacing-sm);
     }
 
     .hero__input {
+        flex: 1;
         width: 100%;
-        /* Full width search on mobile */
         max-width: none;
     }
 
-    .language-selector {
-        margin-left: 0 !important;
-        /* Reset inline style margin */
+    .hero__button {
+        /* Keep button responsive but next to input */
+        width: auto;
     }
 }
 
